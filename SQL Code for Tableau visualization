@@ -1,0 +1,36 @@
+Select * from dbo.CovidVaccinations$ ;--- viewing contents 
+
+Select * from CovidProjectdb.dbo.CovidDeaths;--viewing the contents
+
+---Finding the total cases vs total deaths and death percentage----
+
+Select SUM(cast(new_cases as int)) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, 
+SUM(cast(new_deaths as int))/SUM(cast(New_Cases as int))*100 as DeathPercentage
+From CovidProjectdb.dbo.CovidDeaths
+where continent is not null 
+order by 1,2
+
+---Location wise Death count----
+
+Select location, SUM(cast(new_deaths as int)) as TotalDeathCount
+From CovidProjectdb.dbo.CovidDeaths
+--Where location like '%states%'
+Where continent is null 
+and location not in ('World', 'European Union', 'International')
+Group by location
+order by TotalDeathCount desc
+
+----Location wise GDP and Avg age data----
+
+Select Location, median_age as Avgage, max(gdp_per_capita) as Gdp 
+From dbo.CovidVaccinations$
+Group by Location, median_age
+Order by Gdp desc
+
+---Location/date wise Calculation for People vaccinated and total vaccinations----
+
+Select Location ,date,count(total_vaccinations) as Totalvaccinationbydate,count(people_vaccinated)as Peoplevaccinatedbydate
+From dbo.CovidVaccinations$
+Group by Location, date
+Order by Totalvaccinationbydate desc ,Peoplevaccinatedbydate desc
+
